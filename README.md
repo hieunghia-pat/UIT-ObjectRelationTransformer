@@ -31,7 +31,7 @@ For [coco-caption](https://github.com/daqingliu/coco-caption) and [cider](https:
 
 Download the generated data as the following command line:
 ```
-gdown -id 1lqzulCSU0hWKf6Fp4Au2ltZwo_c0YSR6
+gdown --id 1lqzulCSU0hWKf6Fp4Au2ltZwo_c0YSR6
 ```
 
 Then unzip it inside the UIT-ObjectRelationTransformer directory.
@@ -46,7 +46,7 @@ In this folder we have all required features and pre-processed UIT-ViCI caption.
 #### Download the UIT-ViIC dataset
 
 ```
-gdown -id 1p1yAQrvqdssjsLlFyr_K_oOiUSWXIcz-
+gdown --id 1p1yAQrvqdssjsLlFyr_K_oOiUSWXIcz-
 unzip UIT-ViIC.zip
 rm UIT-ViIC.zip
 ```
