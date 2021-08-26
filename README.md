@@ -27,7 +27,13 @@ For [coco-caption](https://github.com/daqingliu/coco-caption) and [cider](https:
 
 ### Data Preparation
 
-#### Download ResNet101 weights for feature extraction
+#### Download pre-processed caption and extracted feature
+
+First download the requirement for `coco-caption` part
+```
+cd coco-caption
+sh get_stanford_models.sh
+```
 
 Download the generated data as the following command line:
 ```
