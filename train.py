@@ -38,7 +38,7 @@ def train(opt):
     opt.vocab_size = loader.vocab_size
     opt.seq_length = loader.seq_length
 
-    tb_summary_writer = tb and tb.SummaryWriter(opt.checkpoint_path)
+    # tb_summary_writer = tb and tb.SummaryWriter(opt.checkpoint_path)
 
     infos = {}
     # histories = {}
@@ -174,6 +174,7 @@ def train(opt):
             epoch += 1
             epoch_done = True
 
+        '''
         # Write the training loss summary
         if (iteration % opt.losses_log_every == 0):
             add_summary_value(tb_summary_writer, 'train_loss', train_loss, iteration)
@@ -186,14 +187,14 @@ def train(opt):
             if sc_flag:
                 add_summary_value(tb_summary_writer, 'avg_reward', np.mean(reward[:,0]), iteration)
 
-            '''
             loss_history[iteration] = train_loss if not sc_flag else np.mean(reward[:,0])
             lr_history[iteration] = opt.current_lr
             ss_prob_history[iteration] = model.ss_prob
-            '''
+        '''
 
         # make evaluation on validation set, and save model
-        if (iteration % opt.save_checkpoint_every == 0):
+        # if (iteration % opt.save_checkpoint_every == 0):
+        if epoch_done:
             # eval model
             eval_kwargs = {'split': 'val',
                             'dataset': opt.input_json,
@@ -208,10 +209,12 @@ def train(opt):
                     optimizer.scheduler_step(val_loss)
 
             # Write validation result into summary
-            add_summary_value(tb_summary_writer, 'validation loss', val_loss, iteration)
+            # add_summary_value(tb_summary_writer, 'validation loss', val_loss, iteration)
+            '''
             if lang_stats:
                 for k,v in lang_stats.items():
                     add_summary_value(tb_summary_writer, k, v, iteration)
+            '''
             # val_result_history[iteration] = {'loss': val_loss, 'lang_stats': lang_stats, 'predictions': predictions}
 
             # Save model if is improving on validation result
