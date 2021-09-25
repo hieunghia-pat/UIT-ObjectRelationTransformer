@@ -169,7 +169,7 @@ def main(params):
     jimg = {}
     jimg['split'] = img['split']
     if 'filename' in img: jimg['file_path'] = os.path.join(img['filepath'], img['filename']) # copy it over, might need
-    if 'cocoid' in img: jimg['id'] = img['cocoid'] # copy over & mantain an id, if present (e.g. coco ids, useful)
+    if 'id' in img: jimg['id'] = img['id'] # copy over & mantain an id, if present (e.g. coco ids, useful)
     
     if params['images_root'] != '':
       with Image.open(os.path.join(params['images_root'], img['filepath'], img['filename'])) as _img:
