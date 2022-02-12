@@ -17,5 +17,6 @@ data
 data_en
 
 cider
+log_relation_transformer_bu
 
-coco-caption
+*.zip

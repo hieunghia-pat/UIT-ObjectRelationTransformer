@@ -7,27 +7,84 @@ import torch.nn as nn
 
 import numpy as np
 import json
-from json import encoder
-import random
-import string
-import time
 import os
-import sys
 import misc.utils as utils
 from misc.report import ReportData
+from pycocotools.coco import COCO
+from misc.correct_coco_eval_cap import CorrectCOCOEvalCap
+
+# evaluation metrics
+from pycocoevalcap.bleu.bleu import Bleu
+from pycocoevalcap.cider.cider import Cider
+from pycocoevalcap.meteor.meteor import Meteor
+from pycocoevalcap.rouge.rouge import Rouge
+from pycocoevalcap.spice.spice import Spice
+# tokenizer
+from pycocoevalcap.tokenizer.ptbtokenizer import PTBTokenizer
 
 REPORT_DATA_PKL_FILE_TEMPLATE = '%s_%s_report_data.pkl'
 
+def per_sentence_lang_eval(preds, model_id, split):
+    annFile = f'data/uitviic_captions_{split}2017.json'
 
-import opts
-#model_opts = opts.parse_opt()
-#use_box=True
-def language_eval(dataset, preds, model_id, image_root, split):
-    import sys
-    sys.path.append("coco-caption")
-    annFile = f'coco-caption/annotations/uitviic_captions_{split}2017.json'
-    from pycocotools.coco import COCO
-    from misc.correct_coco_eval_cap import CorrectCOCOEvalCap
+    results_dir = 'eval_results'
+    if not os.path.isdir(results_dir):
+        os.mkdir(results_dir)
+    cache_path = os.path.join(results_dir, model_id + '_' + split + '.json')
+
+    coco = COCO(annFile)
+    valids = coco.getImgIds()
+
+    # filter results to only those in MSCOCO validation set (will be about a third)
+    preds_filt = [p for p in preds if p['image_id'] in valids]
+    print('using %d/%d predictions' % (len(preds_filt), len(preds)))
+    json.dump(preds_filt, open(cache_path, 'w')) # serialize to temporary json file. Sigh, COCO API...
+
+    cocoRes = coco.loadRes(cache_path)
+    image_ids = coco.getImgIds()
+
+    scorers = [
+            (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
+            (Meteor(),"METEOR"),
+            (Rouge(), "ROUGE_L"),
+            (Cider(), "CIDEr"),
+            (Spice(), "SPICE")
+        ]
+
+    tokenizer = PTBTokenizer()
+
+    results = {}
+    for image_id in image_ids:
+        gts = {}
+        res = {}
+        gts[image_id] = coco.imgToAnns[image_id]
+        res[image_id] = cocoRes.imgToAnns[image_id]
+
+        gts  = tokenizer.tokenize(gts)
+        res = tokenizer.tokenize(res)
+
+        for scorer, method in scorers:
+            score, _ = scorer.compute_score(gts, res)
+            if type(method) == list:
+                for s, m in zip(score, method):
+                    results[image_id] = {
+                        "gts": gts.values(),
+                        "res": res.values(),
+                        "method": m,
+                        "score": s
+                    }
+            else:
+                results[image_id] = {
+                    "gts": gts.keys(),
+                    "res": res.keys(),
+                    "method": method,
+                    "score": score
+                }
+
+    return results
+
+def language_eval(preds, model_id, image_root, split):
+    annFile = f'data/uitviic_captions_{split}2017.json'
 
     # encoder.FLOAT_REPR = lambda o: format(o, '.3f')
 
@@ -78,7 +135,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
     num_images = eval_kwargs.get('num_images', eval_kwargs.get('val_images_use', -1))
     split = eval_kwargs.get('split', 'val')
     lang_eval = eval_kwargs.get('language_eval', 0)
-    dataset = eval_kwargs.get('dataset', 'coco')
     beam_size = eval_kwargs.get('beam_size', 1)
     use_box = eval_kwargs.get('use_box', 0)
 
@@ -163,7 +219,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
             predictions.pop()
 
         if verbose:
-            print('evaluating validation preformance... %d/%d (%f)' %(ix0 - 1, ix1, loss))
+            print('evaluating validation performance... %d/%d (%f)' %(ix0 - 1, ix1, loss))
 
         if data['bounds']['wrapped']:
             break
@@ -172,8 +228,11 @@ def eval_split(model, crit, loader, eval_kwargs={}):
 
     lang_stats = None
     if lang_eval == 1:
-        lang_stats = language_eval(dataset, predictions, eval_kwargs.get('id'),
-                                   eval_kwargs.get('image_root'), split)
+        # lang_stats = language_eval(predictions, 
+        #                            eval_kwargs.get('image_root'), split)
+        results = per_sentence_lang_eval(predictions, eval_kwargs.get('id'), split)
+
+        json.dump(results, open(f"results_of_{eval_kwargs.get('id')}.json", "w+"), ensure_ascii=False)
 
     # Switch back to training mode
     model.train()

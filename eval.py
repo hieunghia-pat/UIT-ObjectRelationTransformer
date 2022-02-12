@@ -7,7 +7,7 @@ import numpy as np
 
 import time
 import os, sys
-from six.moves import cPickle
+import pickle as cPickle
 
 import opts
 import models
@@ -57,7 +57,7 @@ parser.add_argument('--language_eval', type=int, default=0,
                 help='Evaluate language as well (1 = yes, 0 = no)? BLEU/CIDEr/METEOR/ROUGE_L? requires coco-caption code from Github.')
 parser.add_argument('--dump_images', type=int, default=1,
                 help='Dump images into vis/imgs folder for vis? (1=yes,0=no)')
-parser.add_argument('--dump_json', type=int, default=1,
+parser.add_argument('--dump_json', type=int, default=0,
                 help='Dump json with predictions into vis folder? (1=yes,0=no)')
 parser.add_argument('--dump_path', type=int, default=0,
                 help='Write image paths along with predictions into vis json? (1=yes,0=no)')
@@ -159,7 +159,8 @@ if len(opt.image_folder) == 0:
 else:
   loader = DataLoaderRaw({'folder_path': opt.image_folder,
                             'coco_json': opt.coco_json,
-                            'batch_size': opt.batch_size,
+                            # 'batch_size': opt.batch_size,
+                            'batch_size': 1,
                             'cnn_model': opt.cnn_model,
                             'cnn_weight_dir': opt.cnn_weight_dir})
 # When eval using provided pretrained model, the vocab may be different from what you have in your cocotalk.json
