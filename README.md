@@ -88,7 +88,7 @@ Currently we disabled the histories object while training for optimize the usage
 
 The current command uses scheduled sampling. You can also set scheduled_sampling_start to -1 to disable it.
 
-If you'd like to evaluate BLEU/METEOR/CIDEr scores during training in addition to validation cross entropy loss, use `--language_eval 1` option, but don't forget to download the [coco-caption code](https://github.com/tylin/coco-caption) into `coco-caption` directory.
+If you'd like to evaluate BLEU/METEOR/CIDEr scores during training in addition to validation cross entropy loss, use `--language_eval 1` option.
 
 For more options, see `opts.py`.
 
