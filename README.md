@@ -2,8 +2,6 @@ Object Relation Transformer for Vietnamese Image Captioning
 =================
 This repo is based on [Object Relation Transformer](https://github.com/yahoo/object_relation_transformer) with modification for using with Python3 and the [UIT-ViIC](https://arxiv.org/abs/2002.00175) dataset. For more detail please visit the original repository.
 
-From there to the end there are instructions of the original repository.
-
 ## Object Relation Transformer
 
 This is a PyTorch implementation of the Object Relation Transformer published in NeurIPS 2019. You can find the paper [here](https://papers.nips.cc/paper/9293-image-captioning-transforming-objects-into-words.pdf). This repository is largely based on code from Ruotian Luo's Self-critical Sequence Training for Image Captioning GitHub repo, which can be found [here](https://github.com/ruotianluo/self-critical.pytorch).
@@ -23,6 +21,7 @@ The primary additions are as follows:
 * gensim
 * gdown
 * pycocoevalcap
+* pycocotools
 
 ### Data Preparation
 
@@ -30,7 +29,7 @@ The primary additions are as follows:
 
 Download the generated data as the following command line:
 ```
-gdown --id 1lqzulCSU0hWKf6Fp4Au2ltZwo_c0YSR6
+gdown --id 1bNAMC7xNe9uGYZ6OBTzJz-TTCa2remp-
 ```
 
 Then unzip it inside the UIT-ObjectRelationTransformer directory.
