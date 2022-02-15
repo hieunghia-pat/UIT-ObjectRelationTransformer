@@ -7,6 +7,7 @@ import torch
 import numpy as np
 import json
 import os
+from tqdm import tqdm
 import misc.utils as utils
 from misc.report import ReportData
 from pycocotools.coco import COCO
@@ -42,13 +43,19 @@ def per_sentence_lang_eval(preds, model_id, split):
     cocoRes = coco.loadRes(cache_path)
     image_ids = coco.getImgIds()
 
-    scorers = [
-            (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
-            (Meteor(),"METEOR"),
-            (Rouge(), "ROUGE_L"),
-            (Cider(), "CIDEr"),
-            (Spice(), "SPICE")
-        ]
+    if split == "train":
+        scorers = [
+                (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
+                (Cider(), "CIDEr")
+            ]
+    else:
+        scorers = [
+                (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
+                (Meteor(),"METEOR"),
+                (Rouge(), "ROUGE_L"),
+                (Cider(), "CIDEr"),
+                (Spice(), "SPICE")
+            ]
 
     tokenizer = PTBTokenizer()
 
@@ -84,9 +91,6 @@ def per_sentence_lang_eval(preds, model_id, split):
 
 def language_eval(preds, model_id, image_root, split):
     annFile = f'data/uitviic_captions_{split}2017.json'
-
-    # encoder.FLOAT_REPR = lambda o: format(o, '.3f')
-
     results_dir = 'eval_results'
     if not os.path.isdir(results_dir):
         os.mkdir(results_dir)
@@ -97,13 +101,12 @@ def language_eval(preds, model_id, image_root, split):
 
     # filter results to only those in MSCOCO validation set (will be about a third)
     preds_filt = [p for p in preds if p['image_id'] in valids]
-    print('using %d/%d predictions' % (len(preds_filt), len(preds)))
     json.dump(preds_filt, open(cache_path, 'w')) # serialize to temporary json file. Sigh, COCO API...
 
     cocoRes = coco.loadRes(cache_path)
     cocoEval = CorrectCOCOEvalCap(coco, cocoRes)
     cocoEval.params['image_id'] = cocoRes.getImgIds()
-    cocoEval.evaluate()
+    cocoEval.evaluate(split)
 
     if image_root:
         # Save cocoEval and any other relevant information into a pickle to be used
@@ -137,6 +140,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
     get_results = eval_kwargs.get("get_results", 0)
     beam_size = eval_kwargs.get('beam_size', 1)
     use_box = eval_kwargs.get('use_box', 0)
+    epoch = eval_kwargs.get("epoch")
 
     # Make sure in the evaluation mode
     model.eval()
@@ -148,9 +152,9 @@ def eval_split(model, crit, loader, eval_kwargs={}):
     loss_sum = 0
     loss_evals = 1e-8
     predictions = []
-    while True:
+    pbar = tqdm(range(0, len(loader.split_ix[split]) // loader.batch_size), desc=f"Epoch {epoch} - Evaluation")
+    for iter in pbar:
         data = loader.get_batch(split)
-        n = n + loader.batch_size
 
         if data.get('labels', None) is not None and verbose_loss:
             # forward the model to get loss
@@ -220,11 +224,6 @@ def eval_split(model, crit, loader, eval_kwargs={}):
 
         if verbose:
             print('evaluating validation performance... %d/%d (%f)' %(ix0 - 1, ix1, loss))
-
-        if data['bounds']['wrapped']:
-            break
-        if num_images >= 0 and n >= num_images:
-            break
 
     lang_stats = None
     if lang_eval == 1:
