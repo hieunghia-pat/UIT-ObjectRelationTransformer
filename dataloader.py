@@ -13,8 +13,6 @@ import torch
 import torch.utils.data as data
 import misc.utils as utils
 
-import multiprocessing
-
 class DataLoader(data.Dataset):
 
     def reset_iterator(self, split):
@@ -220,15 +218,13 @@ class DataLoader(data.Dataset):
                 box_file = os.path.join(self.rel_bboxes_dir,str(self.info['images'][ix]['id']) + '.npy')
                 box_coords = np.load(box_file)
                 areas = np.expand_dims(utils.get_box_areas(box_coords), axis=1)
-
-                box_coords_with_area = np.concatenate([box_coords, areas],axis=-1)
                 return (np.load(os.path.join(self.input_fc_dir, str(self.info['images'][ix]['id']) + '.npy')),
                         att_feat,
                         box_coords,
                         ix)
-
         else:
             att_feat = np.zeros((1,1,1))
+            
         return (np.load(os.path.join(self.input_fc_dir, str(self.info['images'][ix]['id']) + '.npy')),
                 att_feat,
                 ix)

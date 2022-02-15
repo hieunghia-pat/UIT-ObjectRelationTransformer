@@ -3,7 +3,6 @@ from __future__ import division
 from __future__ import print_function
 
 import torch
-import torch.nn as nn
 
 import numpy as np
 import json
@@ -229,7 +228,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
 
     lang_stats = None
     if lang_eval == 1:
-        lang_stats = language_eval(predictions, 
+        lang_stats = language_eval(predictions, eval_kwargs.get("id"),
                                    eval_kwargs.get('image_root'), split)
     
     if get_results == 1:
