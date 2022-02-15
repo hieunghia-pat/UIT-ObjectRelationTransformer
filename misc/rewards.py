@@ -6,7 +6,7 @@ import numpy as np
 from collections import OrderedDict
 import torch
 
-from pyciderevalcap.ciderD.ciderD import CiderD
+from misc.pyciderevalcap.ciderD.ciderD import CiderD
 from pycocoevalcap.bleu.bleu import Bleu
 
 CiderD_scorer = None
