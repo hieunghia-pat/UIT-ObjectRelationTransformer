@@ -84,7 +84,7 @@ class LabelSmoothing(nn.Module):
     "Implement label smoothing."
     def __init__(self, size=0, padding_idx=0, smoothing=0.0):
         super(LabelSmoothing, self).__init__()
-        self.criterion = nn.KLDivLoss(size_average=False, reduce=False)
+        self.criterion = nn.KLDivLoss(reduction="sum")
         # self.padding_idx = padding_idx
         self.confidence = 1.0 - smoothing
         self.smoothing = smoothing

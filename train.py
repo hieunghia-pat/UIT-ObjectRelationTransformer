@@ -69,7 +69,7 @@ def train(opt):
     if vars(opt).get('start_from', None) is not None and os.path.isfile(os.path.join(opt.start_from,"optimizer.pth")):
         optimizer.load_state_dict(torch.load(os.path.join(opt.start_from, 'optimizer.pth')))
 
-    for e in range(epoch, opts.max_epochs):
+    for e in range(epoch, opt.max_epochs):
         if not opt.noamopt and not opt.reduce_on_plateau:
             # Assign the learning rate
             if epoch > opt.learning_rate_decay_start and opt.learning_rate_decay_start >= 0:
