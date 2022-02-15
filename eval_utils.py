@@ -43,7 +43,7 @@ def per_sentence_lang_eval(preds, model_id, split):
     cocoRes = coco.loadRes(cache_path)
     image_ids = coco.getImgIds()
 
-    if split == "train":
+    if split == "train" or split == "val":
         scorers = [
                 (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
                 (Cider(), "CIDEr")
@@ -131,7 +131,7 @@ def language_eval(preds, model_id, image_root, split):
     return out
 
 def eval_split(model, crit, loader, eval_kwargs={}):
-    verbose = eval_kwargs.get('verbose', True)
+    verbose = eval_kwargs.get('verbose', False)
     verbose_beam = eval_kwargs.get('verbose_beam', 1)
     verbose_loss = eval_kwargs.get('verbose_loss', 1)
     num_images = eval_kwargs.get('num_images', eval_kwargs.get('val_images_use', -1))

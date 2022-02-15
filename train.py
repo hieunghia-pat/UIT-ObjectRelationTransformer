@@ -147,7 +147,7 @@ def train(opt):
                         "epoch": e}
         eval_kwargs.update(vars(opt))
         val_loss, _, lang_stats = eval_utils.eval_split(dp_model, crit, loader, eval_kwargs)
-        print(f"Loss: {val_loss}")
+        print(f"Validation loss: {val_loss}")
         print(lang_stats)
 
         if opt.reduce_on_plateau:
