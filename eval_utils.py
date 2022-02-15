@@ -135,6 +135,7 @@ def eval_split(model, crit, loader, eval_kwargs={}):
     num_images = eval_kwargs.get('num_images', eval_kwargs.get('val_images_use', -1))
     split = eval_kwargs.get('split', 'val')
     lang_eval = eval_kwargs.get('language_eval', 0)
+    get_results = eval_kwargs.get("get_results", 0)
     beam_size = eval_kwargs.get('beam_size', 1)
     use_box = eval_kwargs.get('use_box', 0)
 
@@ -228,10 +229,11 @@ def eval_split(model, crit, loader, eval_kwargs={}):
 
     lang_stats = None
     if lang_eval == 1:
-        # lang_stats = language_eval(predictions, 
-        #                            eval_kwargs.get('image_root'), split)
+        lang_stats = language_eval(predictions, 
+                                   eval_kwargs.get('image_root'), split)
+    
+    if get_results == 1:
         results = per_sentence_lang_eval(predictions, eval_kwargs.get('id'), split)
-
         json.dump(results, open(f"results_of_{eval_kwargs.get('id')}.json", "w+"), ensure_ascii=False)
 
     # Switch back to training mode

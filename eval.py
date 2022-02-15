@@ -61,6 +61,8 @@ parser.add_argument('--dump_json', type=int, default=0,
                 help='Dump json with predictions into vis folder? (1=yes,0=no)')
 parser.add_argument('--dump_path', type=int, default=0,
                 help='Write image paths along with predictions into vis json? (1=yes,0=no)')
+parser.add_argument("--get_result", type=int, default=1,
+                help="toggle this flag to save to result or not")
 
 # Sampling options
 parser.add_argument('--sample_max', type=int, default=1,
