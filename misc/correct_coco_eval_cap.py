@@ -54,7 +54,7 @@ class CorrectCOCOEvalCap(COCOEvalCap):
         # =================================================
         # Set up scorers
         # =================================================
-        if split == "train":
+        if split == "train" or split == "val":
             scorers = [
                     (Bleu(4), ["Bleu_1", "Bleu_2", "Bleu_3", "Bleu_4"]),
                     (Cider(), "CIDEr")
