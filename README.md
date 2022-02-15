@@ -44,9 +44,9 @@ In this folder we have all required features and pre-processed UIT-ViCI caption.
 #### Download the UIT-ViIC dataset
 
 ```
-gdown --id 1p1yAQrvqdssjsLlFyr_K_oOiUSWXIcz-
-unzip UIT-ViIC.zip
-rm UIT-ViIC.zip
+gdown --id 1Kj_dts97suf_e2jGyLI7wLzoRimDy0dy
+unzip dataset_uitviic.zip
+rm dataset_uitviic.zip
 ```
 
 ### Model Training and Evaluation
