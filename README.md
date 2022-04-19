@@ -2,7 +2,9 @@ Object Relation Transformer
 ===
 This is the re-implemented version of [Object Relation Transformer](https://arxiv.org/pdf/1906.05963.pdf) to evaluate its performance on the [UIT-ViIC](https://arxiv.org/pdf/2002.00175.pdf) dataset and [VieCap4H](https://people.cs.umu.se/sonvx/files/VieCap4H_VLSP21.pdf) dataset.
 
-For detailed implementation for this repository, please visit the repository [OpenViIC](https://github.com/hieunghia-pat/OpenViIC)
+For detailed implementation for this repository, please visit the repository [OpenViIC](https://github.com/hieunghia-pat/OpenViIC).
+
+We note that for some reasions that we cannot figure out, our implementation achieved better performance than the [original](https://github.com/yahoo/object_relation_transformer) implementation on the two Vietnamese datasets.
 
 
 ## Contact
